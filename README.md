@@ -12,17 +12,11 @@ Fast multi-target SFTP sync for VS Code / Cursor, powered by [rclone](https://rc
 
 ## Install
 
-- **Cursor / Open VSX:** [open-vsx.org/extension/puupuls/better-ssh](https://open-vsx.org/extension/puupuls/better-ssh) — search **Better SSH** in Cursor Extensions (`puupuls.better-ssh`)
-- **GitHub VSIX:** [Releases](https://github.com/Puupuls/better-ssh/releases)
+Search **Better SSH** (`puupuls.better-ssh`) in the Extensions view, or:
 
-```bash
-# from a downloaded .vsix
-code --install-extension better-ssh-*.vsix
-# or
-cursor --install-extension better-ssh-*.vsix
-```
-
-Or **Extensions: Install from VSIX…** in the command palette.
+- **VS Code:** [marketplace.visualstudio.com](https://marketplace.visualstudio.com/items?itemName=puupuls.better-ssh)
+- **Cursor / Open VSX:** [open-vsx.org/extension/puupuls/better-ssh](https://open-vsx.org/extension/puupuls/better-ssh)
+- **VSIX:** [GitHub Releases](https://github.com/Puupuls/better-ssh/releases) → **Extensions: Install from VSIX…**
 
 ## Quick start
 
