@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "vscode-sftp / Better SSH sftp.json",
+  "description": "Natizyskunk vscode-sftp config (single object, profiles, or multi-context array). Better SSH loads this when better-ssh.json is absent.",
+  "oneOf": [
+    {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/contextEntry" },
+      "description": "Multi-context: one entry per remote. Each entry requires a unique name."
+    },
+    { "$ref": "#/definitions/rootEntry" }
+  ],
+  "definitions": {
+    "hop": {
+      "type": "object",
+      "required": ["host"],
+      "properties": {
+        "host": { "type": "string" },
+        "port": { "type": "integer", "default": 22 },
+        "username": { "type": "string" },
+        "privateKeyPath": { "type": "string" },
+        "password": { "type": "string" },
+        "passphrase": { "type": "string" },
+        "hop": {
+          "oneOf": [
+            { "$ref": "#/definitions/hop" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/definitions/hop" }
+            }
+          ]
+        }
+      }
+    },
+    "entryFields": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique label (required for multi-context array entries)"
+        },
+        "context": {
+          "type": "string",
+          "description": "Local subdirectory relative to the workspace"
+        },
+        "protocol": {
+          "type": "string",
+          "enum": ["sftp", "ssh", "ftp", "ftps"],
+          "default": "sftp",
+          "description": "Better SSH supports sftp/ssh only"
+        },
+        "host": { "type": "string" },
+        "port": { "type": "integer", "default": 22 },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "passphrase": { "type": "string" },
+        "privateKeyPath": {
+          "type": "string",
+          "description": "Path to private key; ~ is expanded"
+        },
+        "agent": {
+          "oneOf": [{ "type": "string" }, { "type": "boolean" }]
+        },
+        "remotePath": {
+          "type": "string",
+          "description": "Absolute or home-relative path on the remote"
+        },
+        "uploadOnSave": { "type": "boolean", "default": false },
+        "followSymlinks": { "type": "boolean" },
+        "ignore": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "hop": {
+          "oneOf": [
+            { "$ref": "#/definitions/hop" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/definitions/hop" }
+            }
+          ],
+          "description": "ProxyJump chain (vscode-sftp hop layout)"
+        }
+      }
+    },
+    "contextEntry": {
+      "allOf": [
+        { "$ref": "#/definitions/entryFields" },
+        {
+          "type": "object",
+          "required": ["name", "host", "remotePath"]
+        }
+      ]
+    },
+    "rootEntry": {
+      "allOf": [
+        { "$ref": "#/definitions/entryFields" },
+        {
+          "type": "object",
+          "properties": {
+            "profiles": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/definitions/entryFields" },
+              "description": "Named profile overrides merged onto the root entry"
+            },
+            "defaultProfile": {
+              "type": "string",
+              "description": "Profile used as defaultTargets when profiles are set"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

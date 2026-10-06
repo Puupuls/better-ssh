@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Better SSH configuration",
+  "description": "Native better-ssh.json shape, or vscode-sftp-compatible object/array (same as sftp.json).",
+  "oneOf": [
+    { "$ref": "#/definitions/nativeConfig" },
+    { "$ref": "sftp.schema.json" }
+  ],
+  "definitions": {
+    "nativeConfig": {
+      "type": "object",
+      "required": ["targets"],
+      "additionalProperties": false,
+      "properties": {
+        "uploadOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Upload the saved file to defaultTargets automatically"
+        },
+        "cdOnConnect": {
+          "type": "boolean",
+          "default": true,
+          "description": "When opening SSH terminal, cd into remotePath if set"
+        },
+        "transfers": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 16,
+          "description": "Number of file transfers to run in parallel (rclone --transfers)"
+        },
+        "checkers": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 32,
+          "description": "Number of checkers to run in parallel (rclone --checkers)"
+        },
+        "defaultTargets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Target names used for upload-on-save and default fan-out. Use [\"*\"] for all."
+        },
+        "ignore": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Glob patterns to skip on upload-on-save / sync (explicit Explorer upload bypasses these)"
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/target" }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["name", "remotePath"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique label for this remote"
+        },
+        "remotePath": {
+          "type": "string",
+          "description": "Absolute or home-relative path on the remote"
+        },
+        "context": {
+          "type": "string",
+          "description": "Local subdirectory relative to the workspace (vscode-sftp compatible). Only files under this folder sync to this target."
+        },
+        "sshConfigHost": {
+          "type": "string",
+          "description": "Host alias from ~/.ssh/config (preferred; honors ProxyJump)"
+        },
+        "host": {
+          "type": "string",
+          "description": "SSH hostname or IP (required if sshConfigHost is omitted)"
+        },
+        "port": {
+          "type": "integer",
+          "default": 22
+        },
+        "username": {
+          "type": "string"
+        },
+        "privateKeyPath": {
+          "type": "string",
+          "description": "Path to private key; ~ is expanded"
+        },
+        "password": {
+          "type": "string",
+          "description": "Deprecated in JSON: prefer VS Code SecretStorage. If present, Better SSH migrates it out of the file on load. Prefer SSH keys when possible."
+        },
+        "passphrase": {
+          "type": "string",
+          "description": "Deprecated in JSON: prefer VS Code SecretStorage. Passphrase for an encrypted privateKeyPath; migrated out of the file on load."
+        },
+        "hop": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "ProxyJump hosts (used when sshConfigHost is not set)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Set false to keep the target in config but skip upload-on-save / default uploads (e.g. unreachable on current network)"
+        },
+        "transfers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "checkers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "protocol": {
+          "type": "string",
+          "enum": ["sftp", "ssh"],
+          "default": "sftp",
+          "description": "vscode-sftp compat; Better SSH is always SFTP/SSH"
+        },
+        "uploadOnSave": {
+          "type": "boolean",
+          "description": "vscode-sftp compat; merged into root uploadOnSave (true if any target sets true)"
+        },
+        "followSymlinks": {
+          "type": "boolean",
+          "description": "vscode-sftp compat; ignored by Better SSH"
+        },
+        "ignore": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "vscode-sftp compat; merged into root ignore"
+        }
+      }
+    }
+  }
+}

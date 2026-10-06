@@ -1,0 +1,364 @@
+{
+  "name": "better-ssh",
+  "displayName": "Better SSH",
+  "description": "Fast multi-target SFTP sync via rclone, with hopping, diff, and Open SSH Terminal",
+  "version": "0.1.6",
+  "publisher": "puupuls",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Puupuls/better-ssh.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "sftp",
+    "ssh",
+    "rclone",
+    "sync",
+    "remote"
+  ],
+  "activationEvents": [
+    "workspaceContains:.vscode/better-ssh.json",
+    "workspaceContains:.vscode/sftp.json",
+    "onTerminalProfile:betterSsh.terminal"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Better SSH",
+      "properties": {
+        "betterSsh.rclonePath": {
+          "type": "string",
+          "default": "rclone",
+          "description": "Path to the rclone binary. Leave as \"rclone\" to use PATH, or auto-download a managed copy on first use if missing."
+        },
+        "betterSsh.sshPath": {
+          "type": "string",
+          "default": "ssh",
+          "description": "Path to the OpenSSH client binary"
+        },
+        "betterSsh.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Write verbose logs to the Better SSH output channel"
+        },
+        "betterSsh.registerTerminalProfiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Add each remote as a profile under the Terminal panel New Terminal (+) dropdown (writes Better SSH: … entries into workspace terminal.integrated.profiles so each window stays scoped to its remotes)"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "betterSsh.config",
+        "title": "Config",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.uploadActiveFile",
+        "title": "Upload Active File",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.uploadFile",
+        "title": "Upload File",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.uploadFolder",
+        "title": "Upload Folder",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.downloadActiveFile",
+        "title": "Download Active File",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.downloadFile",
+        "title": "Download File",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.downloadFolder",
+        "title": "Download Folder",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.syncLocalToRemote",
+        "title": "Sync Local → Remote",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.syncRemoteToLocal",
+        "title": "Sync Remote → Local",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.check",
+        "title": "Check Local vs Remote",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.diffActiveFile",
+        "title": "Diff Active File with Remote",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.diffFile",
+        "title": "Diff with Remote",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.deleteRemote",
+        "title": "Delete on Remote",
+        "category": "Better SSH",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "betterSsh.downloadRemote",
+        "title": "Download from Remote",
+        "category": "Better SSH",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "betterSsh.previewRemote",
+        "title": "Preview on Remote",
+        "category": "Better SSH",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "betterSsh.openTerminal",
+        "title": "Open Terminal",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.openTerminal.target",
+        "title": "Open Terminal (Target)",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.refreshExplorer",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.showRemotes",
+        "title": "Show Remotes",
+        "category": "Better SSH"
+      },
+      {
+        "command": "betterSsh.showOutput",
+        "title": "Show Output",
+        "category": "Better SSH"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "betterSsh",
+          "title": "Better SSH",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "betterSsh": [
+        {
+          "id": "betterSsh.explorer",
+          "name": "Remotes"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "betterSsh.explorer",
+        "contents": "No remote config found.\n[Create better-ssh.json](command:betterSsh.config)"
+      }
+    ],
+    "terminal": {
+      "profiles": [
+        {
+          "id": "betterSsh.terminal",
+          "title": "Better SSH",
+          "icon": "remote"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "betterSsh.openTerminal.target",
+          "when": "false"
+        },
+        {
+          "command": "betterSsh.uploadFile",
+          "when": "false"
+        },
+        {
+          "command": "betterSsh.downloadFile",
+          "when": "false"
+        },
+        {
+          "command": "betterSsh.diffFile",
+          "when": "false"
+        },
+        {
+          "command": "betterSsh.deleteRemote",
+          "when": "false"
+        },
+        {
+          "command": "betterSsh.downloadRemote",
+          "when": "false"
+        },
+        {
+          "command": "betterSsh.previewRemote",
+          "when": "false"
+        }
+      ],
+      "terminal/newDropdown": [
+        {
+          "command": "betterSsh.openTerminal",
+          "group": "betterSsh",
+          "when": "betterSsh.enabled"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "betterSsh.uploadFile",
+          "group": "betterSsh@1",
+          "when": "betterSsh.enabled && !explorerResourceIsFolder"
+        },
+        {
+          "command": "betterSsh.uploadFolder",
+          "group": "betterSsh@1",
+          "when": "betterSsh.enabled && explorerResourceIsFolder"
+        },
+        {
+          "command": "betterSsh.downloadFile",
+          "group": "betterSsh@2",
+          "when": "betterSsh.enabled && !explorerResourceIsFolder"
+        },
+        {
+          "command": "betterSsh.downloadFolder",
+          "group": "betterSsh@2",
+          "when": "betterSsh.enabled && explorerResourceIsFolder"
+        },
+        {
+          "command": "betterSsh.diffFile",
+          "group": "3_compare",
+          "when": "betterSsh.enabled && !explorerResourceIsFolder"
+        },
+        {
+          "command": "betterSsh.syncLocalToRemote",
+          "group": "betterSsh@3",
+          "when": "betterSsh.enabled && explorerResourceIsFolder"
+        },
+        {
+          "command": "betterSsh.syncRemoteToLocal",
+          "group": "betterSsh@3",
+          "when": "betterSsh.enabled && explorerResourceIsFolder"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "betterSsh.uploadFile",
+          "group": "betterSsh@1",
+          "when": "betterSsh.enabled && resourceScheme == file"
+        },
+        {
+          "command": "betterSsh.diffFile",
+          "group": "3_compare",
+          "when": "betterSsh.enabled && resourceScheme == file"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "betterSsh.refreshExplorer",
+          "when": "view == betterSsh.explorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "betterSsh.openTerminal.target",
+          "group": "navigation",
+          "when": "view == betterSsh.explorer && viewItem == targetRoot"
+        },
+        {
+          "command": "betterSsh.previewRemote",
+          "group": "inline",
+          "when": "view == betterSsh.explorer && viewItem == remoteFilePreviewable"
+        },
+        {
+          "command": "betterSsh.previewRemote",
+          "group": "navigation@0",
+          "when": "view == betterSsh.explorer && viewItem == remoteFilePreviewable"
+        },
+        {
+          "command": "betterSsh.downloadRemote",
+          "group": "inline",
+          "when": "view == betterSsh.explorer && (viewItem == remoteFile || viewItem == remoteFilePreviewable || viewItem == remoteFolder)"
+        },
+        {
+          "command": "betterSsh.downloadRemote",
+          "group": "3_trans@1",
+          "when": "view == betterSsh.explorer && (viewItem == remoteFile || viewItem == remoteFilePreviewable || viewItem == remoteFolder)"
+        },
+        {
+          "command": "betterSsh.deleteRemote",
+          "group": "7_modification",
+          "when": "view == betterSsh.explorer && (viewItem == remoteFile || viewItem == remoteFilePreviewable || viewItem == remoteFolder)"
+        }
+      ]
+    },
+    "resourceLabelFormatters": [
+      {
+        "scheme": "better-ssh",
+        "formatting": {
+          "label": "${path}",
+          "separator": "/",
+          "tildify": false,
+          "workspaceSuffix": "Better SSH"
+        }
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": ".vscode/better-ssh.json",
+        "url": "./schema/better-ssh.schema.json"
+      },
+      {
+        "fileMatch": ".vscode/sftp.json",
+        "url": "./schema/sftp.schema.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "compile": "tsc -p ./ --noEmit",
+    "package": "vsce package --no-dependencies",
+    "setup:cursor": "npm run package && cursor --install-extension better-ssh-${npm_package_version}.vsix --force"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.24.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "ignore": "^7.0.10"
+  }
+}
